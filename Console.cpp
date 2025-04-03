@@ -1,6 +1,23 @@
 #include "Console.h"
 #include <iostream>
 
+int BorderSingleArr[]{ 0x250C, 0x252C, 0x2510, 0x251C, 0x253C, 0x2524, 0x2514, 0x2534, 0x2518, 0x2500, 0x2502 };
+int BorderDoubleArr[]{ 0x2554, 0x2566, 0x2557, 0x2560, 0x256C, 0x2563, 0x255A, 0x2569, 0x255D, 0x2550, 0x2551 };
+enum Border : int
+{
+	TopLeft,
+	TopCenter,
+	TopRight,
+	MiddleLeft,
+	MiddleCenter,
+	MiddleRight,
+	BottomLeft,
+	BottomCenter,
+	BottomRight,
+	Horisontal,
+	Vertical
+};
+
 Console::Console()
 {
 	consoleOutput = GetStdHandle(STD_OUTPUT_HANDLE);
