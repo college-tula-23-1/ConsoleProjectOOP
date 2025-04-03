@@ -5,6 +5,9 @@ Console::Console()
 {
 	consoleOutput = GetStdHandle(STD_OUTPUT_HANDLE);
 	consoleInput = GetStdHandle(STD_INPUT_HANDLE);
+
+	SetConsoleCP(CP_UTF8);
+	SetConsoleOutputCP(CP_UTF8);
 }
 
 Console::Console(const char* title)
@@ -18,20 +21,32 @@ Console::Console(std::string title)
 	: Console(title.c_str()) {
 }
 
-void Console::SetBackColor(BackColor color)
+
+HANDLE& Console::getDescriptor()
 {
-	SetConsoleTextAttribute(consoleOutput, (int)color);
+	return consoleOutput;
 }
 
-void Console::SetForeColor(ForeColor color)
+void Console::SetBackColor(Color color, bool brightness)
 {
-	SetConsoleTextAttribute(consoleOutput, (int)color);
+	GetConsoleScreenBufferInfo(consoleOutput, &info);
+	BYTE colorFore = info.wAttributes & (0b1111);
+	BYTE colorBack = (static_cast<BYTE>(color) + (brightness ? 8 : 0)) << 4;
+	SetConsoleTextAttribute(consoleOutput, colorBack | colorFore);
 }
 
-void Console::SetColor(BackColor backColor, ForeColor foreColor)
+void Console::SetForeColor(Color color, bool brightness)
 {
-	SetConsoleTextAttribute(consoleOutput, (int)backColor | (int)foreColor);
+	GetConsoleScreenBufferInfo(consoleOutput, &info);
+	BYTE colorBack = info.wAttributes & (0b1111 << 4);
+	BYTE colorFore = static_cast<BYTE>(color) + (brightness ? 8 : 0);
+	SetConsoleTextAttribute(consoleOutput, colorBack | colorFore);
 }
+
+//void Console::SetColor(BackColor backColor, ForeColor foreColor)
+//{
+//	SetConsoleTextAttribute(consoleOutput, (int)backColor | (int)foreColor);
+//}
 
 void Console::CursorGoto(int row, int column)
 {
@@ -69,3 +84,27 @@ void Console::Rectangle(int row, int column, int height, int width, char pattern
 		for (int c = 0; c < width; c++)
 			WriteGoto(row + r, column + c, pattern);
 }
+
+void Console::Rect(int row, int column, int height, int width, char pattern)
+{
+	CHAR_INFO* bufferRect = new CHAR_INFO[height * width];
+	GetConsoleScreenBufferInfo(consoleOutput, &info);
+	BYTE colorFore = info.wAttributes & 0b1111;
+	BYTE colorBack = info.wAttributes & (0b1111 << 4);
+
+	BYTE attributes = colorFore | colorBack;
+	for (int i{ 0 }; i < height * width; ++i)
+	{
+		bufferRect[i].Char.UnicodeChar = pattern;
+		bufferRect[i].Attributes = attributes;
+	}
+
+	COORD bufferSize{ width, height };
+	COORD bufferPosition{ 0, 0 };
+	SMALL_RECT rect{ column, row, column + width, row + height };
+	
+	WriteConsoleOutput(consoleOutput, bufferRect, bufferSize, bufferPosition, &rect);
+	delete[] bufferRect;
+}
+
+
