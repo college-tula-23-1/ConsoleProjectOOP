@@ -42,3 +42,38 @@ public:
 	void Rectangle(int row, int column, int height, int width, char pattern);
 	void Rect(int row, int column, int height, int width, char pattern);
 };
+
+
+class WindowConsole
+{
+protected:
+	Console* console;
+
+	int row, column;
+	int width;
+	int height;
+
+	Color borderBack,
+		borderFore,
+		areaBack,
+		areaFore;
+
+	std::string title;
+
+	bool isShow;
+
+	CHAR_INFO* bufferSave;
+	CHAR_INFO* bufferShow;
+
+public:
+	WindowConsole(Console* console);
+	WindowConsole(Console* console, int row, int column, int height, int width);
+
+	void SetColors(Color borderBack, Color borderFore, Color areaBack, Color areaFore);
+
+	void WriteGoto(int row, int column, std::string message);
+	void WriteGoto(int row, int column, char message);
+
+	virtual void Show();
+	virtual void Hide();
+};
