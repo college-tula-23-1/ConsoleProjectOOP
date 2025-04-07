@@ -243,3 +243,24 @@ void WindowConsole::Hide()
 
 	isShow = false;
 };
+
+
+void WindowConsole::WriteGoto(int row, int column, std::string message)
+{
+	console->SetBackColor(areaBack, true);
+	console->SetForeColor(areaFore, true);
+	console->WriteGoto(this->row + row, this->column + column, message);
+}
+
+
+void WindowConsole::WriteGoto(int row, int column, char message)
+{
+	console->SetBackColor(areaBack, true);
+	console->SetForeColor(areaFore, true);
+	console->WriteGoto(this->row + row, this->column + column, message);
+}
+
+std::string& WindowConsole::Title()
+{
+	return title;
+}

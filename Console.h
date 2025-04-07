@@ -71,6 +71,7 @@ public:
 
 	void SetColors(Color borderBack, Color borderFore, Color areaBack, Color areaFore);
 
+	std::string& Title();
 	void WriteGoto(int row, int column, std::string message);
 	void WriteGoto(int row, int column, char message);
 
